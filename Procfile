@@ -1,1 +1,1 @@
-web: cd backend && npx prisma migrate deploy && node dist/server.js
+web: cd backend && npx prisma db push && node dist/server.js
