@@ -9,7 +9,19 @@ import { errorMiddleware } from "./middleware/error.middleware";
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.CORS_ORIGIN }));
+const allowedOrigins = env.CORS_ORIGIN.split(",").map((o) =>
+  o.trim().replace(/\/$/, "")
+);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.some((a) => origin === a || origin.endsWith(".vercel.app")))
+        return callback(null, true);
+      callback(null, false);
+    },
+  })
+);
 app.use(express.json({ limit: "50kb" }));
 
 // Rate limiter for message endpoint
